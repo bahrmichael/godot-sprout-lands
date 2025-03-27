@@ -1,0 +1,52 @@
+[gd_scene load_steps=10 format=3 uid="uid://cco655gu6ctij"]
+
+[ext_resource type="Shader" uid="uid://2ukfp5xm6uct" path="res://scenes/objects/shake.gdshader" id="1_3jm00"]
+[ext_resource type="Texture2D" uid="uid://cgaf4e412kxu4" path="res://assets/game/tilesets/basic_grass_biome_things.png" id="1_qyt5x"]
+[ext_resource type="Script" uid="uid://rwm1gudxm3hu" path="res://scenes/components/hurt_component.gd" id="2_818ny"]
+[ext_resource type="Script" uid="uid://gciyrwcl43q" path="res://scenes/objects/trees/large_tree.gd" id="2_hbog4"]
+[ext_resource type="Script" uid="uid://du75b1l7h21n5" path="res://scenes/components/damage_component.gd" id="3_frg0j"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_m2unl"]
+resource_local_to_scene = true
+shader = ExtResource("1_3jm00")
+shader_parameter/shake_intensity = 0.0
+shader_parameter/shake_speed = 10.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ajjps"]
+atlas = ExtResource("1_qyt5x")
+region = Rect2(16, 0, 32, 32)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_s77vt"]
+radius = 5.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ymaq1"]
+size = Vector2(12, 26)
+
+[node name="LargeTree" type="Sprite2D"]
+material = SubResource("ShaderMaterial_m2unl")
+position = Vector2(0, -12)
+texture = SubResource("AtlasTexture_ajjps")
+script = ExtResource("2_hbog4")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(0, 10)
+shape = SubResource("CircleShape2D_s77vt")
+
+[node name="HurtComponent" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 8
+script = ExtResource("2_818ny")
+tool = 1
+
+[node name="HurtComponentCollisionShape2D" type="CollisionShape2D" parent="HurtComponent"]
+position = Vector2(0, 2)
+shape = SubResource("RectangleShape2D_ymaq1")
+debug_color = Color(0.93653, 1.77121e-05, 0.631819, 0.42)
+
+[node name="DamageComponent" type="Node2D" parent="."]
+script = ExtResource("3_frg0j")
+max_damage = 5
+
+[connection signal="area_entered" from="HurtComponent" to="HurtComponent" method="_on_area_entered"]
